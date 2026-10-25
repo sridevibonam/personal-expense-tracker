@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Expense</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+        }
+
+        input, select, button {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+        }
+
+        button {
+            background: #0f766e;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        a {
+            display: block;
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Expense</h2>
+
+        <form method="POST">
+            <label>Expense Name</label>
+            <input type="text" name="title"
+                   value="{{ expense.title }}" required maxlength="100">
+
+            <label>Amount (₹)</label>
+            <input type="number" name="amount"
+                   value="{{ expense.amount }}" min="0.01"
+                   step="0.01" required>
+
+            <label>Category</label>
+<select name="category" required>
+    {% for category in
+        ["Food", "Travel", "Shopping", "Education", "Bills", "Other"] %}
+        <option value="{{ category }}"
+            {% if expense.category == category %}selected{% endif %}>
+            {{ category }}
+        </option>
+    {% endfor %}
+</select>
+
+            <label>Expense Date</label>
+            <input type="date" name="date"
+                   value="{{ expense.date }}" required>
+
+            <button type="submit">Save Changes</button>
+        </form>
+
+        <a href="/">Cancel and Go Back</a>
+    </div>
+</body>
+</html>

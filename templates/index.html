@@ -1,0 +1,428 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Personal Expense Tracker</title>
+
+    <!-- Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 30px 15px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 650px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #0f766e;
+            font-size: 28px;
+            margin-top: 0;
+        }
+
+        p {
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .subtitle,
+        .empty-message {
+            text-align: center;
+        }
+
+        h2 {
+            margin-top: 30px;
+            color: #334155;
+            font-size: 21px;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #334155;
+        }
+
+        input,
+        select {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 15px;
+            background-color: white;
+            color: #1e293b;
+        }
+
+        input:focus,
+        select:focus {
+            outline: 2px solid #99f6e4;
+            border-color: #0f766e;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            border: none;
+            border-radius: 7px;
+            background-color: #0f766e;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #115e59;
+        }
+
+        .expense-card,
+        .category-card {
+            padding: 15px;
+            margin-top: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .expense-card p {
+            text-align: left;
+            margin: 8px 0;
+        }
+
+        .delete-button {
+            background-color: #dc2626;
+            margin-top: 10px;
+        }
+        .expense-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.expense-actions form {
+    flex: 1;
+    margin-top: 0;
+}
+
+.edit-button {
+    display: block;
+    flex: 1;
+    padding: 14px;
+    margin-top: 10px;
+    border-radius: 7px;
+    background-color: #2563eb;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.edit-button:hover {
+    background-color: #1d4ed8;
+}
+
+.expense-actions .delete-button {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.expense-actions .edit-button,
+.expense-actions form {
+    min-width: 0;
+}
+
+        .delete-button:hover {
+            background-color: #b91c1c;
+        }
+
+        .category-amount {
+            float: right;
+            color: #0f766e;
+            font-weight: bold;
+        }
+
+        .chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 350px;
+    margin: 20px auto;
+}
+
+        .total-amount {
+            color: #0f766e;
+            font-size: 22px;
+        }
+
+        hr {
+            margin-top: 30px;
+            border: 0;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 19px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <h1>Personal Expense Tracker</h1>
+
+        <p class="subtitle">
+            Track your spending, one expense at a time!
+        </p>
+
+        <!-- Add Expense Form -->
+        <h2>Add a New Expense</h2>
+
+        <form action="/" method="POST">
+
+            <label for="title">Expense Name</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                placeholder="Example: Lunch"
+                maxlength="100"
+                required
+            >
+
+            <label for="amount">Amount (₹)</label>
+            <input
+                type="number"
+                id="amount"
+                name="amount"
+                placeholder="Enter amount"
+                min="0.01"
+                step="0.01"
+                required
+            >
+
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+                <option value="">Select a category</option>
+                <option value="Food">Food</option>
+                <option value="Travel">Travel</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Education">Education</option>
+                <option value="Bills">Bills</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="date">Expense Date</label>
+            <input
+                type="date"
+                id="date"
+                name="date"
+                required
+            >
+
+            <button type="submit">Add Expense</button>
+        </form>
+
+        <hr>
+
+        <!-- Expense Summary -->
+        <h2>Expense Summary</h2>
+
+        <h3 class="total-amount">
+            Total Spent: ₹{{ "%.2f"|format(total) }}
+        </h3>
+
+        <!-- Category-wise Spending -->
+        <h2>Category-wise Spending</h2>
+
+        {% if category_totals %}
+            {% for category, amount in category_totals.items() %}
+                <div class="category-card">
+                    <strong>{{ category }}</strong>
+
+                    <span class="category-amount">
+                        ₹{{ "%.2f"|format(amount) }}
+                    </span>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-message">
+                No category spending available yet.
+            </p>
+        {% endif %}
+
+        <!-- Monthly Spending Analysis -->
+        <h2>Monthly Spending Analysis</h2>
+
+        {% if monthly_totals %}
+            {% for month, amount in monthly_totals.items() %}
+                <div class="category-card">
+                    <strong>{{ month }}</strong>
+
+                    <span class="category-amount">
+                        ₹{{ "%.2f"|format(amount) }}
+                    </span>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-message">
+                No monthly spending available yet.
+            </p>
+        {% endif %}
+
+        <!-- Spending Chart -->
+        <h2>Spending Chart</h2>
+
+        {% if category_totals %}
+            <div class="chart-container">
+                <canvas id="expenseChart"></canvas>
+            </div>
+        {% else %}
+            <p class="empty-message">
+                Add an expense to view your spending chart.
+            </p>
+        {% endif %}
+
+        <hr>
+
+        <!-- Expense History -->
+        <h2>Expense History</h2>
+
+        {% if expenses %}
+            {% for expense in expenses %}
+                <div class="expense-card">
+
+                    <strong>{{ expense.title }}</strong>
+
+                    <p>
+                        Amount: ₹{{ "%.2f"|format(expense.amount) }}<br>
+                        Category: {{ expense.category }}<br>
+                        Date: {{ expense.date }}
+                    </p>
+
+                    
+<div class="expense-actions">
+
+    <a href="/edit/{{ expense.id }}" class="edit-button">
+        Edit Expense
+    </a>
+
+    <form
+        action="/delete/{{ expense.id }}"
+        method="POST"
+        onsubmit="return confirm('Are you sure you want to delete this expense?');"
+    >
+        <button type="submit" class="delete-button">
+            Delete Expense
+        </button>
+    </form>
+
+</div>
+
+
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-message">
+                No expenses added yet.
+            </p>
+        {% endif %}
+
+    </div>
+
+    <!-- Pass category data from Flask to JavaScript -->
+    <script id="category-chart-data" type="application/json">{{ category_totals | tojson }}</script>
+
+    <!-- Initialize Doughnut Chart -->
+    {% if category_totals %}
+    <script>
+        const dataElement = document.getElementById(
+            "category-chart-data"
+        );
+
+        const categoryData = JSON.parse(dataElement.textContent);
+
+        const categoryLabels = Object.keys(categoryData);
+        const categoryAmounts = Object.values(categoryData);
+
+        const chartCanvas = document.getElementById("expenseChart");
+
+        if (chartCanvas && typeof Chart !== "undefined") {
+            new Chart(chartCanvas, {
+                type: "doughnut",
+
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        label: "Amount Spent (₹)",
+                        data: categoryAmounts,
+                        borderWidth: 2
+                    }]
+                },
+
+                options: {
+                    responsive: true,
+
+                    plugins: {
+                        legend: {
+                            position: "bottom"
+                        },
+
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ": ₹" +
+                                        Number(context.raw).toFixed(2);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+    {% endif %}
+
+</body>
+</html>
